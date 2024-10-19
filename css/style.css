@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+  }
+  .dashboard {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 20px;
+    width: 80%;
+    max-width: 800px;
+  }
+  h1 {
+    color: #0077be;
+    text-align: center;
+  }
+  #waterLevelDisplay {
+    font-size: 24px;
+    text-align: center;
+    margin: 20px 0;
+  }
+  #waterTank {
+    width: 100px;
+    height: 200px;
+    border: 2px solid #0077be;
+    margin: 20px auto;
+    position: relative;
+    border-radius: 0 0 10px 10px;
+  }
+  #waterLevel {
+    width: 100%;
+    background-color: #0077be;
+    position: absolute;
+    bottom: 0;
+    transition: height 0.5s ease-in-out;
+    border-radius: 0 0 8px 8px;
+  }
