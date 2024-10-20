@@ -45,7 +45,7 @@ function updateWaterLevel(levels) {
   }
   // Adicionar dados ao gráfico
   for (let i=0;i<levels.length;i++) {
-    const now = new Date(levels[i].time)
+    const now = new Date(levels[i].time * 1000) //Faz a conversão do unixTimestamp para Date
     chart.data.labels.push(now.toLocaleString());
     chart.data.datasets[0].data.push(levels[i].level);
 
