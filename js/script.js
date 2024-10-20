@@ -4,7 +4,7 @@ const topic = 'water/tank/level';
 
 // Configuração do gráfico
 const ctx = document.getElementById('waterLevelChart').getContext('2d');
-const chart = new Chart(ctx, {
+var chart = new Chart(ctx, {
   type: 'line',
   data: {
     labels: [],
@@ -27,25 +27,30 @@ const chart = new Chart(ctx, {
 });
 
 // Atualizar o gráfico e o display
-function updateWaterLevel(level) {
+function updateWaterLevel(levels) {
+  
   const waterLevelDisplay = document.getElementById('waterLevelDisplay');
   const waterLevelElement = document.getElementById('waterLevel');
   
-  waterLevelDisplay.textContent = `Nível de água: ${level}%`;
-  waterLevelElement.style.height = `${level}%`;
-
-  // Adicionar dados ao gráfico
-  const now = new Date();
-  chart.data.labels.push(now.toLocaleTimeString());
-  chart.data.datasets[0].data.push(level);
-
-  // Manter apenas os últimos 10 pontos de dados
-  if (chart.data.labels.length > 10) {
-    chart.data.labels.shift();
-    chart.data.datasets[0].data.shift();
+  waterLevelDisplay.textContent = `Nível de água: ${levels[levels.length-1].level}%`;
+  waterLevelElement.style.height = `${levels[levels.length-1].level}%`;
+  
+  // Remove os dados antigos
+  for (let i=0;i<levels.length;i++) {
+    
+    chart.data.labels.pop();
+    chart.data.datasets[0].data.pop();
+  
+    chart.update();
   }
+  // Adicionar dados ao gráfico
+  for (let i=0;i<levels.length;i++) {
+    const now = new Date(levels[i].time)
+    chart.data.labels.push(now.toLocaleString());
+    chart.data.datasets[0].data.push(levels[i].level);
 
-  chart.update();
+    chart.update();
+  }
 }
 
 // Conectar ao broker MQTT
@@ -56,16 +61,9 @@ client.on('connect', () => {
 
 // Receber mensagens
 client.on('message', (topic, message) => {
-  const level = parseFloat(message.toString());
-  if (!isNaN(level)) {
-    updateWaterLevel(level);
+  const levels = JSON.parse(message.toString());
+  if (!isNaN(levels[0].level)) {
+    updateWaterLevel(levels);
   }
+  //alert(levels[0].level)
 });
-
-// Simular dados para demonstração
-/*let simulatedLevel = 50;
-setInterval(() => {
-  simulatedLevel += (Math.random() - 0.5) * 10;
-  simulatedLevel = Math.min(100, Math.max(0, simulatedLevel));
-  updateWaterLevel(simulatedLevel.toFixed(1));
-}, 2000);*/
