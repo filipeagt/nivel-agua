@@ -9,7 +9,7 @@ var chart = new Chart(ctx, {
   data: {
     labels: [],
     datasets: [{
-      label: 'Nível de Água (%)',
+      label: 'Histórico do Nível de Água (cm)',
       data: [],
       borderColor: '#0077be',
       tension: 0.1
@@ -32,7 +32,7 @@ function updateWaterLevel(levels) {
   const waterLevelDisplay = document.getElementById('waterLevelDisplay');
   const waterLevelElement = document.getElementById('waterLevel');
   
-  waterLevelDisplay.textContent = `Nível de água: ${levels[levels.length-1].level}%`;
+  waterLevelDisplay.textContent = `Nível de água atual: ${levels[levels.length-1].level} cm`;
   waterLevelElement.style.height = `${levels[levels.length-1].level}%`;
   
   // Remove os dados antigos
@@ -53,6 +53,15 @@ function updateWaterLevel(levels) {
   }
 }
 
+function updateWaterLevelElement(level) {
+  
+  const waterLevelDisplay = document.getElementById('waterLevelDisplay');
+  const waterLevelElement = document.getElementById('waterLevel');
+  
+  waterLevelDisplay.textContent = `Nível de água atual: ${level} cm`;
+  waterLevelElement.style.height = `${level}%`;
+}
+
 // Conectar ao broker MQTT
 client.on('connect', () => {
   console.log('Conectado ao broker MQTT');
@@ -61,9 +70,14 @@ client.on('connect', () => {
 
 // Receber mensagens
 client.on('message', (topic, message) => {
-  const levels = JSON.parse(message.toString());
-  if (!isNaN(levels[0].level)) {
-    updateWaterLevel(levels);
+  if (isNaN(message.toString())) { //Se mensagem não numérica
+    const levels = JSON.parse(message.toString());
+    if (!isNaN(levels[0].level)) {
+      updateWaterLevel(levels);
+    }
+  } else { //Se numérica
+    updateWaterLevelElement(message.toString())
   }
+  
   //alert(levels[0].level)
 });
