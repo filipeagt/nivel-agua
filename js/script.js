@@ -72,6 +72,7 @@ client.on('connect', () => {
 client.on('message', (topic, message) => {
   if (isNaN(message.toString())) { //Se mensagem não numérica
     const levels = JSON.parse(message.toString());
+    console.log(levels.length)
     if (!isNaN(levels[0].level)) {
       updateWaterLevel(levels);
     }
